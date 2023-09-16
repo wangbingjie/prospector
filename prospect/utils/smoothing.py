@@ -267,7 +267,9 @@ def smooth_vel_fft(wavelength, spectrum, outwave, sigma_out, inres=0.0,
     spec_conv = smooth_fft(dv, spec, sigma)
     # interpolate onto output grid
     if outwave is not None:
-        spec_conv = np.interp(outwave, wave, spec_conv)
+        import spectres
+        # spec_conv = np.interp(outwave, wave, spec_conv)
+        spec_conv = spectres.spectres(outwave, wave, spec_conv) # conserves flux
 
     return spec_conv
 
