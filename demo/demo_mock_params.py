@@ -97,8 +97,9 @@ def build_obs(snr=10.0, filterset=["sdss_g0", "sdss_r0"],
     # We'll put the mock data in this dictionary, just as we would for real
     # data.  But we need to know which bands (and wavelengths if doing
     # spectroscopy) in which to generate mock data.
-    smock = Spectrum()  # no spectrum
+    smock = Spectrum(wavelength=None, flux=None)  # no spectrum
     pmock = Photometry(filters=filterset)
+    smock.rectify()
 
     # We need the models to make a mock
     sps = build_sps(**kwargs)
@@ -223,6 +224,11 @@ if __name__ == '__main__':
     # --- Set up output ---
     ts = time.strftime("%y%b%d-%H.%M", time.localtime())
     hfile = f"{args.outfile}_{ts}_result.h5"
+
+
+    from prospect.fitting import lnprobfn
+    lnp = lnprobfn(model.theta, model, observations=obs, sps=sps)
+    print('lnp', lnp)
 
     #  --- Run the actual fit ---
     output = fit_model(obs, model, sps, **config)
